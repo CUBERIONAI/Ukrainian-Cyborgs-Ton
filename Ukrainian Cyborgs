@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ukrainian Cyborgs</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script> <style>
+        /* Стилі з ClickGPT, адаптовані під кольори України */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #0d1b2a; /* Темно-синій, як нічне небо або камуфляж */
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .background-animation {
+            background: linear-gradient(45deg, #0d1b2a, #005a8d, #0d1b2a); /* Синій градієнт */
+            animation: gradientAnimation 15s ease infinite;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: 400% 400%;
+            z-index: -1;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container {
+            background-color: #1b263b; /* Темно-сірий/синій */
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(255, 200, 0, 0.5); /* Жовтий відтінок */
+            padding: 30px;
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            color: #FFD700; /* Золото/Жовтий */
+            margin-bottom: 20px;
+            font-size: 2.2em;
+            text-shadow: 0 0 10px rgba(255, 200, 0, 0.7);
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            margin: 5px 10px;
+        }
+        .stat-value {
+            color: #00BFFF; /* Блакитний */
+            font-weight: bold;
+        }
+
+        .main-button {
+            background-color: #00BFFF; /* Блакитний */
+            color: #1a1a2e;
+            border: none;
+            border-radius: 50%;
+            width: 180px;
+            height: 180px;
+            font-size: 2.5em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.8), 0 0 40px rgba(0, 191, 255, 0.5);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background-image: url('https://via.placeholder.com/180/FFD700/0d1b2a?text=CYBORG'); /* Стилізований Кіборг */
+            background-size: cover;
+            background-position: center;
+        }
+        .main-button.clicked::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            animation: pulse 0.4s ease-out forwards;
+        }
+        @keyframes pulse {
+            0% { width: 0; height: 0; opacity: 0.5; }
+            100% { width: 200px; height: 200px; opacity: 0; }
+        }
+        .floating-text {
+            position: absolute;
+            color: #FFD700; /* Жовтий */
+            font-size: 2em;
+            font-weight: bold;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            text-shadow: 0 0 5px rgba(255, 200, 0, 0.8);
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+        /* ... (Стилі для progress-bar, nav-buttons, modals, toast залишаються існуючими) ... */
+        /* Адаптація кольорів */
+        .progress-bar-container { background-color: #3a3a60; }
+        .progress-bar-fill { background-color: #FFD700; /* Жовтий */ }
+        .nav-button.active {
+            background-color: #FFD700;
+            color: #0d1b2a;
+            box-shadow: 0 0 15px rgba(255, 200, 0, 0.5);
+        }
+        .modal-content { background-color: #1b263b; box-shadow: 0 0 25px rgba(0, 191, 255, 0.6); }
+        .modal-content h2 { color: #00BFFF; }
+        .upgrade-info h3, .mission-info h3, .card-info h3, .chest-info h3, .presale-info h3, .store-info h3, .boost-info h3, .computer-part-info h3, .clan-info h3, .stats-info h3 {
+            color: #FFD700;
+        }
+        .buy-button, .complete-button, .claim-button, .activate-button {
+            background-color: #00BFFF;
+            color: #0d1b2a;
+        }
+        .buy-button:hover, .complete-button:hover, .claim-button:hover, .activate-button:hover {
+            background-color: #0099CC;
+        }
+        .toast-notification {
+            background-color: rgba(0, 191, 255, 0.9);
+            color: #0d1b2a;
+        }
+        .cost-display .icon.ton { 
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2300bfff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 17c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7zm0-10h-2V7h2c1.1 0 2 .9 2 2s-.9 2-2 2zm-2 4h4v-2h-4c-1.1 0-2-.9-2-2s.9-2 2-2h2V7H8v2h2c1.1 0 2 .9 2 2s-.9 2-2 2zm6-4h-4v-2h4V7h2v2h-2v2h2v4h-2V13z"/></svg>') center/contain no-repeat; 
+        }
+        .cost-display .icon.ucbg { 
+             /* Символ UCBG - Тризуб */
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFD700"><path d="M12 2L10 6H4l4 4-2 4 6 2 6-2-2-4 4-4H14l-2-4z"/></svg>') center/contain no-repeat; 
+        }
+        .cost-display .icon.ton { fill: #00BFFF; }
+        
+        .language-selector {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        .language-selector button {
+            background-color: #3a3a60;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .language-selector button.active {
+            background-color: #00BFFF;
+            color: #0d1b2a;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+    <div class="container" id="gameContainer">
+        <h1>🇺🇦 Ukrainian Cyborgs</h1>
+        <div class="stats">
+            <div class="stat-item">UCBG: <span id="ucbgCount" class="stat-value">0</span></div>
+            <div class="stat-item">TON: <span id="tonCount" class="stat-value">0</span></div>
+            <div class="stat-item">Мощність (Клік): <span id="clickPower" class="stat-value">1</span></div>
+            <div class="stat-item">Авто-дохід: <span id="autoClickPowerDisplay" class="stat-value">0</span></div>
+        </div>
+        <button class="main-button" id="mainButton"></button>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="worldProgressFill"></div>
+        </div>
+        <div class="progress-text">Емісія UCBG: <span id="worldProgressText">0%</span></div>
+
+        <div class="language-selector">
+            <button id="langUA" class="active">UA</button>
+            <button id="langEN">EN</button>
+            <button id="langRU">RU</button>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-button active" id="btnHome">Головна</button>
+            <button class="nav-button" id="btnUpgrades">Прокачка</button>
+            <button class="nav-button" id="btnComputer">Кібер-Модулі</button>
+            <button class="nav-button" id="btnMissions">Завдання</button>
+            <button class="nav-button" id="btnCards">Трофеї</button>
+            <button class="nav-button" id="btnShop">Магазин</button>
+            <button class="nav-button" id="btnBoosts">Прискорювачі</button>
+            <button class="nav-button" id="btnClan">Бригади</button>
+            <button class="nav-button" id="btnStats">Звіт</button>
+            <button class="nav-button" id="btnPreSale">TON Exchange</button>
+        </div>
+    </div>
+
+    <div id="introModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('introModal')">&times;</span>
+            <h2>🇺🇦 Кодекс Кіборга</h2>
+            <p style="margin-bottom: 20px; text-align: justify; line-height: 1.6;">
+                Наш світ зруйнований, але **Нескорений**. З 2014 року і особливо після 24.02.2022, ми — **Кіборги**, обороняємо останній Бастіон. Кожен ваш тап — це **ресурс**, кожне вдосконалення — **технологія**, кожен зібраний UCBG — **крок до Перемоги**.
+            </p>
+            <p style="margin-bottom: 20px; text-align: justify; line-height: 1.6; font-weight: bold;">
+                Наше завдання: зібрати 200 млн UCBG, щоб активувати **"Ефект Яйця"** і припинити манінг назавжди, зафіксувавши цінність монети.
+            </p>
+            <p style="margin-top: 30px; font-size: 0.9em; color: #808080; text-align: center;">
+                Слава Україні! Героям Слава!
+            </p>
+            <button class="buy-button" onclick="startGameAfterIntro()">Приступити до Операції</button>
+        </div>
+    </div>
+
+    <div id="upgradesModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('upgradesModal')">&times;</span>
+            <h2>🛠️ Прокачка (Озброєння)</h2>
+            <div id="upgradesList"></div>
+        </div>
+    </div>
+    
+    <div id="computerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('computerModal')">&times;</span>
+            <h2>💻 Кібер-Модулі (PC)</h2>
+            <p style="text-align: center; margin-bottom: 20px;">
+                Посилюйте Кібер-ядро для максимальної віддачі!
+            </p>
+            <div id="computerPartsList"></div>
+        </div>
+    </div>
+
+    <div id="missionsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('missionsModal')">&times;</span>
+            <h2>🎯 Завдання (Бойовий план)</h2>
+            <div id="missionsList"></div>
+        </div>
+    </div>
+
+    <div id="cardsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('cardsModal')">&times;</span>
+            <h2>🏆 Трофеї</h2>
+            <p style="text-align: center;">Наступний збір трофеїв: <span id="cardsRefreshTimer">00:00:00</span></p>
+            <div id="cardsList"></div>
+        </div>
+    </div>
+
+    <div id="shopModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('shopModal')">&times;</span>
+            <h2>🛒 Магазин (Екіпірування)</h2>
+            <div class="shop-category">Обмін на NFT та TON (Імітація)</div>
+            <div class="store-item">
+                <div class="shop-item-details">
+                    <h3>Конвертація UCBG в NFT</h3>
+                    <p>Колекціонуйте UCBG для обміну на NFT-колекцію Кіборгів.</p>
+                </div>
+                <div class="shop-item-actions">
+                    <button class="buy-button" onclick="showToast('Функція в розробці. Слідкуйте за анонсами!', 'info')">Конвертувати</button>
+                </div>
+            </div>
+
+            <div class="shop-category">Прискорення Манінгу</div>
+            <div class="store-item">
+                <div class="shop-item-details">
+                    <h3>🚀 Преміум Підписка (x5 Дохід)</h3>
+                    <p>Підвищує загальний дохід x5 назавжди. Валюта: TON</p>
+                </div>
+                <div class="shop-item-actions">
+                    <button class="buy-button" onclick="buySubscription(5)">Купити (5 TON)</button>
+                </div>
+            </div>
+
+            <div class="shop-category">Скини Кіборга</div>
+            <div class="current-skin-preview" id="currentSkinPreview"></div>
+            <div id="skinsList"></div>
+        </div>
+    </div>
+
+    <div id="boostsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('boostsModal')">&times;</span>
+            <h2>⚡ Прискорювачі (Баффи)</h2>
+            <div class="shop-category">Активні</div>
+            <div id="activeBoostsList">
+                <p style="text-align: center;">Активних прискорювачів немає.</p>
+            </div>
+            <div class="shop-category">Магазин</div>
+            <div id="boostsShopList"></div>
+        </div>
+    </div>
+
+    <div id="clanModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('clanModal')">&times;</span>
+            <h2>🤝 Бригади (Клани)</h2>
+            <div class="clan-info">
+                <h3>Ваш Профіль</h3>
+                <p>Позивний: <span id="playerNicknameElem" class="stat-value">Анонім</span></p>
+                <p>ID: <span id="playerIDElem" class="stat-value"></span></p>
+            </div>
+            <div class="clan-info">
+                <h3>Ваша Бригада</h3>
+                <p>Назва: <span id="myClanNameElem" class="stat-value">Не в Бригаді</span></p>
+                <p>Ранг: <span id="myClanRankElem" class="stat-value"></span></p>
+                <p>Кіборгів: <span id="myClanMembersElem" class="stat-value"></span></p>
+                <p>Загальна потужність: <span id="myClanTotalProgressElem" class="stat-value"></span></p>
+            </div>
+            <div class="clan-input-group">
+                <input type="text" id="clanNameInput" placeholder="Назва Бригади/Код">
+                <button class="buy-button" onclick="joinOrCreateClan()">Приєднатись/Сформувати Бригаду</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="statsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('statsModal')">&times;</span>
+            <h2>📊 Звіт про Операцію</h2>
+            <div class="stats-info">
+                <h3>Ваші показники</h3>
+                <p>Всього UCBG: <span class="stat-value" id="ucbgCountStat">0</span></p>
+                <p>Всього TON: <span class="stat-value" id="tonCountStat">0</span></p>
+                <p>Поточна Мощність (клік): <span class="stat-value" id="clickPowerStat">1</span></p>
+                <p>Поточний Авто-дохід: <span class="stat-value" id="autoClickPowerDisplayStat">0</span></p>
+                <p>Емісія (Ваша): <span class="stat-value" id="worldProgressTextStat">0%</span></p>
+            </div>
+            <div class="stats-info">
+                <h3>Глобальні показники</h3>
+                <p>Кіборгів Онлайн: <span class="stat-value" id="globalOnlinePlayers">N/A</span></p>
+                <p>Всього UCBG намайнено: <span class="stat-value" id="globalTotalGptcMined">N/A</span></p>
+                <p>Ваш глобальний ранг: <span class="stat-value" id="globalPlayerRank">N/A</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="presaleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('presaleModal')">&times;</span>
+            <h2>💸 TON Exchange (Трейд)</h2>
+            <div class="presale-info">
+                <p>Обміняйте TON на UCBG для швидкої прокачки!</p>
+                <p>Ваші TON: <span id="presaleTonCount" class="stat-value">0</span></p>
+                <p>Курс: 1 TON = 100,000 UCBG</p>
+                <label for="presaleTonInput">Скільки TON бажаєте обміняти?</label>
+                <input type="number" id="presaleTonInput" class="presale-buy-input" placeholder="Введіть кількість TON" min="0.01" step="0.01">
+                <button class="buy-button" onclick="buyPreSaleTokens()">Обміняти</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Game State Variables ---
+        let ucbg = 0;
+        let ton = 0;
+        let clickPower = 1;
+        let autoClickPower = 0;
+        let totalMinedUCBG = 0; // Total UCBG mined by the player
+        const EMISSION_LIMIT = 200000000; // 200 Million UCBG, where mining stops
+
+        const BASE_CLICK_POWER = 1;
+        const BASE_AUTO_CLICK_POWER = 0;
+        const BASE_WORLD_PROGRESS_PER_CLICK = 1; // 1 UCBG per click base
+
+        let upgrades = {};
+        let computerParts = {};
+        let missions = {};
+        let collectedCards = {};
+        let currentAvailableCards = [];
+        let cardsRefreshTime = 0;
+        let ownedSkins = { 'default': true };
+        let activeSkin = 'default';
+        let activeBoosts = {};
+        let introShown = localStorage.getItem('introShown') === 'true';
+
+        // Custom Variables for UCBG
+        let isPremium = localStorage.getItem('isPremium') === 'true';
+        const PREMIUM_MULTIPLIER = 5;
+        let currentLanguage = localStorage.getItem('currentLanguage') || 'ua';
+
+
+        // Clan data
+        let playerNickname = localStorage.getItem('playerNickname') || 'Кіборг-Нік';
+        let playerID = localStorage.getItem('playerID') || generateUniqueId();
+        let myClan = localStorage.getItem('myClan') || '';
+        let myClanRank = localStorage.getItem('myClanRank') || 'N/A';
+        let myClanMembers = localStorage.getItem('myClanMembers') || 'N/A';
+        let myClanTotalProgress = localStorage.getItem('myClanTotalProgress') || 'N/A';
+
+        // --- DOM Elements ---
+        const ucbgCountElem = document.getElementById('ucbgCount');
+        const tonCountElem = document.getElementById('tonCount');
+        const clickPowerElem = document.getElementById('clickPower');
+        const autoClickPowerDisplayElem = document.getElementById('autoClickPowerDisplay');
+        const worldProgressFill = document.getElementById('worldProgressFill');
+        const worldProgressText = document.getElementById('worldProgressText');
+        const mainButton = document.getElementById('mainButton');
+        const gameContainer = document.getElementById('gameContainer');
+        const introModal = document.getElementById('introModal');
+        const upgradesList = document.getElementById('upgradesList');
+        const computerPartsList = document.getElementById('computerPartsList');
+        const missionsList = document.getElementById('missionsList');
+        const cardsList = document.getElementById('cardsList');
+        const skinsList = document.getElementById('skinsList');
+        const boostsShopList = document.getElementById('boostsShopList');
+        const activeBoostsList = document.getElementById('activeBoostsList');
+
+        const toastNotification = document.createElement('div');
+        toastNotification.classList.add('toast-notification');
+        document.body.appendChild(toastNotification);
+
+        // Pre-sale elements
+        const presaleTonInput = document.getElementById('presaleTonInput');
+        const presaleTonCountElem = document.getElementById('presaleTonCount');
+
+        // Stats elements
+        const ucbgCountStat = document.getElementById('ucbgCountStat');
+        const tonCountStat = document.getElementById('tonCountStat');
+        const clickPowerStat = document.getElementById('clickPowerStat');
+        const autoClickPowerDisplayStat = document.getElementById('autoClickPowerDisplayStat');
+        const worldProgressTextStat = document.getElementById('worldProgressTextStat');
+        const cardsRefreshTimerElem = document.getElementById('cardsRefreshTimer');
+
+        // --- Translations ---
+        const translations = {
+            'ua': {
+                'home': 'Головна', 'upgrades': 'Прокачка', 'computer': 'Кібер-Модулі', 'missions': 'Завдання', 'cards': 'Трофеї',
+                'shop': 'Магазин', 'boosts': 'Прискорювачі', 'clan': 'Бригади', 'stats': 'Звіт', 'presale': 'TON Exchange',
+                'ucbg': 'UCBG', 'ton': 'TON', 'click_power': 'Мощність (Клік)', 'auto_income': 'Авто-дохід', 'emission': 'Емісія UCBG',
+                'max_level': 'Максимальний рівень досягнуто!', 'buy': 'Купити', 'not_enough_resources': 'Недостатньо ресурсів!',
+                'click_boost': 'Буст до кліку', 'auto_boost': 'Буст до авто-доходу', 'mission_completed': 'Виконано!', 
+                'claim_reward': 'Забрати нагороду', 'buy_sub': 'Купити (5 TON)', 'active': 'Активно', 'apply': 'Примінити',
+                'join_clan': 'Приєднатись/Сформувати Бригаду', 'not_in_clan': 'Не в Бригаді', 'nickname': 'Позивний',
+                'exchange': 'Обміняти', 'invalid_ton': 'Введіть коректну кількість TON!', 'subscription_purchased': 'Преміум Підписка активована!',
+                'mission_success': 'Місія виконана!', 'secret_code_activated': 'Секретний код активовано!', 'wrong_code': 'Невірний секретний код!',
+                'chest_not_enough_ucbg': 'Недостатньо UCBG для покупки сундука!', 'chest_ucbg_reward': 'Ви знайшли {amount} UCBG!',
+                'chest_ton_reward': 'Ви знайшли {amount} TON!', 'chest_card_reward': 'Ви знайшли нову карту!', 'chest_opened': 'Сундук відкрито!',
+                'card_bought': 'Карта куплена!', 'upgrade_bought': 'Покращення куплено!', 'part_bought': 'Кібер-Модуль куплений!',
+                'boost_bought': 'Прискорювач активований на {duration} год.!', 'skin_bought': 'Ви купили скин "{name}"!', 
+                'skin_applied': 'Скин "{name}" примінений!', 'skin_not_owned': 'Недостатньо UCBG або скин вже куплений!',
+                'clan_name_short': 'Назва Бригади має бути не менше 3 символів!', 'already_in_clan': 'Ви вже в Бригаді "{name}"!',
+                'join_success': 'Ви приєднались до Бригади "{name}"!', 'update_nickname': 'Ваш позивний тепер {nickname}.',
+                'max_level_upgrade': 'Це покращення вже на максимальному рівні!', 'max_level_part': 'Цей модуль ПК вже на максимальному рівні!',
+                'max_level_card': 'Ця карта вже на максимальному рівні!', 'new_cards_available': 'Доступні нові трофеї!',
+                'refresh_timer': 'Наступний збір трофеїв: ', 'all_cards_collected': 'Всі доступні трофеї зібрані! Дочекайтесь оновлення.',
+                'not_enough_ton': 'Недостатньо TON!'
+            },
+            'en': { /* ... (Англійський переклад) ... */ },
+            'ru': { /* ... (Російський переклад) ... */ }
+        };
+
+        function getText(key) {
+            return translations[currentLanguage][key] || key;
+        }
+
+        // --- Game Data (Simplified to UC/TON) ---
+        const ALL_UPGRADES = [
+            { id: 'arm_1', name: 'Посилення екзоскелета', description: 'Збільшує потужність кожного кліку.', maxLevel: 10,
+              baseCost: { ucbg: 10 }, costMultiplier: 1.5, basePowerBoost: 1, powerBoostMultiplier: 1.2 },
+            { id: 'arm_2', name: 'Оптимізація Кібер-Ядра', description: 'Значно збільшує ефективність кліків.', maxLevel: 5,
+              baseCost: { ucbg: 100, ton: 0.1 }, costMultiplier: 1.8, basePowerBoost: 5, powerBoostMultiplier: 1.5 },
+            { id: 'auto_1', name: 'Запуск Дрона-Ремонтника', description: 'Починає пасивний збір UCBG.', maxLevel: 15,
+              baseCost: { ucbg: 50 }, costMultiplier: 1.4, baseAutoBoost: 1, autoBoostMultiplier: 1.2 },
+            { id: 'auto_2', name: 'Автономний Майнінг Модуль', description: 'Збільшує швидкість пасивного збору.', maxLevel: 10,
+              baseCost: { ucbg: 500, ton: 0.5 }, costMultiplier: 1.7, baseAutoBoost: 5, autoBoostMultiplier: 1.4 },
+        ];
+
+        const ALL_COMPUTER_PARTS = [
+            { id: 'cpu', name: 'Центральний Процесор', description: 'Збільшує загальну продуктивність, силу кліку.', maxLevel: 10,
+              baseCost: { ucbg: 1000, ton: 1 }, costMultiplier: 2.0, basePowerBoost: 10, powerBoostMultiplier: 1.3 },
+            { id: 'gpu', name: 'Нейро-Відеокарта (FPV-модуль)', description: 'Оптимізує обробку, збільшує авто-дохід.', maxLevel: 10,
+              baseCost: { ucbg: 1500, ton: 1.5 }, costMultiplier: 2.1, baseAutoBoost: 10, autoBoostMultiplier: 1.35 },
+            { id: 'ram', name: 'Квантова ОЗУ', description: 'Збільшує ефективність всіх операцій.', maxLevel: 5,
+              baseCost: { ucbg: 2000, ton: 2.5 }, costMultiplier: 2.5, basePowerBoost: 5, powerBoostMultiplier: 1.1, baseAutoBoost: 5, autoBoostMultiplier: 1.1 },
+        ];
+
+        const ALL_MISSIONS = [
+            { id: 'click_100', name: 'Провести 100 Тапів', target: 100, current: 0, reward: { ucbg: 500 }, type: 'click', completed: false },
+            { id: 'buy_1_upgrade', name: 'Придбати 1 покращення', target: 1, current: 0, reward: { ucbg: 1000 }, type: 'upgrade_bought', completed: false },
+            { id: 'telegram_channel', name: 'Підписатись на @Ukrainian_Cyborgs', target: 1, current: 0, reward: { ucbg: 10000 }, type: 'channel_sub', completed: false, link: 'https://t.me/Ukrainian_Cyborgs' },
+            { id: 'telegram_chat', name: 'Підписатись на @Ukrainian_Cyborgs_ton', target: 1, current: 0, reward: { ucbg: 10000 }, type: 'channel_sub', completed: false, link: 'https://t.me/Ukrainian_Cyborgs_ton' },
+            { id: 'invite_1_friend', name: 'Запросити 1 Друга (Початковий)', target: 1, current: 0, reward: { ucbg: 5000 }, type: 'invite', completed: false },
+            { id: 'invite_5_friends', name: 'Запросити 5 Друзів', target: 5, current: 0, reward: { ucbg: 15000, ton: 0.05 }, type: 'invite', completed: false },
+            { id: 'ucbg_5000', name: 'Накопичити 5,000 UCBG', target: 5000, current: 0, reward: { ucbg: 3000 }, type: 'ucbg_reach', completed: false },
+            { id: 'buy_1_card', name: 'Здобути 1 Трофей', target: 1, current: 0, reward: { ucbg: 2000 }, type: 'card_bought', completed: false },
+            { id: 'buy_1_computer_part', name: 'Придбати 1 Кібер-Модуль', target: 1, current: 0, reward: { ucbg: 7500, ton: 0.1 }, type: 'computer_part_bought', completed: false },
+        ];
+        
+        // ... (ALL_CARDS, ALL_SKINS, ALL_BOOSTS залишаються існуючими, але з заміною UCBG замість GPTC/AICU) ...
+
+        // --- Helper Functions ---
+        function formatNumber(num) {
+            if (num === undefined || num === null) return 'N/A';
+            if (num >= 1_000_000_000_000) return (num / 1_000_000_000_000).toFixed(2) + 'T';
+            if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(2) + 'B';
+            if (num >= 1_000_000) return (num / 1_000_000).toFixed(2) + 'M';
+            if (num >= 1_000) return (num / 1_000).toFixed(2) + 'K';
+            return Math.round(num * 100) / 100;
+        }
+
+        function showToast(message, type = 'info') { /* ... (Toast logic) ... */ }
+        function generateUniqueId() { /* ... (ID logic) ... */ return 'player_' + Math.random().toString(36).substr(2, 9); }
+
+        function getCostHtml(costs) {
+            let html = '';
+            for (const currency in costs) {
+                if (costs[currency] > 0) {
+                    let currencyClass = currency === 'ton' ? 'ton' : 'ucbg';
+                    html += `<span class="cost-item"><span class="icon ${currencyClass}"></span> ${formatNumber(costs[currency])}</span>`;
+                }
+            }
+            return html;
+        }
+
+        function canAfford(costs) {
+            for (const currency in costs) {
+                if (currency === 'ucbg' && ucbg < costs[currency]) return false;
+                if (currency === 'ton' && ton < costs[currency]) return false;
+            }
+            return true;
+        }
+
+        function deductCost(costs) {
+            for (const currency in costs) {
+                if (currency === 'ucbg') ucbg -= costs[currency];
+                if (currency === 'ton') ton -= costs[currency];
+            }
+        }
+        
+        function getBoostMultiplier(type) { /* ... (Boost logic) ... */ return 1; }
+
+        // --- Game State Management ---
+        function saveGame() {
+            // У реальній грі: Telegram.WebApp.ready(); Telegram.WebApp.request.set.data(JSON.stringify(state));
+            localStorage.setItem('ucbg', ucbg.toFixed(2));
+            localStorage.setItem('ton', ton.toFixed(2));
+            localStorage.setItem('totalMinedUCBG', totalMinedUCBG.toFixed(2));
+            // ... save other variables
+            localStorage.setItem('isPremium', isPremium);
+            localStorage.setItem('currentLanguage', currentLanguage);
+        }
+
+        function loadGame() {
+            // У реальній грі: Telegram.WebApp.ready(); const data = Telegram.WebApp.request.get.data();
+            ucbg = parseFloat(localStorage.getItem('ucbg')) || 0;
+            ton = parseFloat(localStorage.getItem('ton')) || 0;
+            totalMinedUCBG = parseFloat(localStorage.getItem('totalMinedUCBG')) || 0;
+            // ... load other variables
+            isPremium = localStorage.getItem('isPremium') === 'true';
+            currentLanguage = localStorage.getItem('currentLanguage') || 'ua';
+            // Ensure introShown is boolean
+            introShown = localStorage.getItem('introShown') === 'true';
+        }
+
+        function calculateStats() {
+            let currentClickPower = BASE_CLICK_POWER;
+            let currentAutoClickPower = BASE_AUTO_CLICK_POWER;
+
+            // ... (Logic from ALL_UPGRADES, ALL_CARDS, ALL_COMPUTER_PARTS to calculate currentClickPower and currentAutoClickPower) ...
+
+            let effectiveMultiplier = 1;
+            if (isPremium) effectiveMultiplier *= PREMIUM_MULTIPLIER;
+            effectiveMultiplier *= getBoostMultiplier('clickPower'); // Apply boosts (if implemented)
+
+            clickPower = currentClickPower * effectiveMultiplier;
+            autoClickPower = currentAutoClickPower * effectiveMultiplier;
+        }
+
+        function updateDisplay() {
+            calculateStats();
+            
+            ucbgCountElem.textContent = formatNumber(ucbg);
+            tonCountElem.textContent = formatNumber(ton);
+            clickPowerElem.textContent = formatNumber(clickPower);
+            autoClickPowerDisplayElem.textContent = formatNumber(autoClickPower);
+            
+            const emissionPercent = (totalMinedUCBG / EMISSION_LIMIT * 100);
+            worldProgressFill.style.width = `${Math.min(100, emissionPercent)}%`;
+            worldProgressText.textContent = `${emissionPercent.toFixed(6)}%`; // High precision for emission
+
+            // Update stats modal
+            // ... (similar updates for stats modal elements) ...
+        }
+
+        // --- Navigation ---
+        function setupNavigation() { /* ... (Navigation logic) ... */ }
+        function closeModal(modalId) { /* ... (Close modal logic) ... */ }
+
+        // --- Main Button Logic (Tap) ---
+        mainButton.addEventListener('click', (event) => {
+            if (totalMinedUCBG >= EMISSION_LIMIT) {
+                showToast('Емісія UCBG припинена! Функція "Ефект Яйця" активована.', 'error');
+                return;
+            }
+
+            const earnedUCBG = clickPower;
+            ucbg += earnedUCBG;
+            totalMinedUCBG += earnedUCBG;
+
+            updateMissionProgress('click_100', 1);
+            
+            mainButton.classList.add('clicked');
+            setTimeout(() => { mainButton.classList.remove('clicked'); }, 100);
+
+            const floatingText = document.createElement('div');
+            floatingText.classList.add('floating-text');
+            floatingText.textContent = `+${formatNumber(earnedUCBG)}`;
+            
+            floatingText.style.left = `${event.clientX}px`;
+            floatingText.style.top = `${event.clientY}px`;
+            
+            document.body.appendChild(floatingText);
+            floatingText.addEventListener('animationend', () => { floatingText.remove(); });
+            
+            updateDisplay();
+            saveGame();
+        });
+
+        // --- Auto Clicker ---
+        function startAutoClicker() {
+            setInterval(() => {
+                if (totalMinedUCBG >= EMISSION_LIMIT) return;
+
+                const earnedUCBG = autoClickPower;
+                if (earnedUCBG > 0) {
+                    ucbg += earnedUCBG;
+                    totalMinedUCBG += earnedUCBG;
+                    updateDisplay();
+                    saveGame();
+                }
+            }, 1000); // Every second
+        }
+
+        // --- Missions Logic ---
+        function updateMissionProgress(missionId, value) {
+            const mission = missions[missionId];
+            if (!mission || mission.completed) return;
+            // ... (Mission progress logic) ...
+            saveGame();
+            // renderMissions(); // Should be called after successful claim
+        }
+
+        function claimMissionReward(id) {
+             // ... (Claim reward logic) ...
+             // For telegram_channel/chat: check if user is a member (requires real Telegram API, here we just assume success)
+            if (mission.type === 'channel_sub') {
+                // Real check with Telegram API needed here
+                mission.completed = true;
+            }
+             // ... (Rest of claim logic) ...
+        }
+
+        // --- Subscription Logic ---
+        function buySubscription(price) {
+            const SUB_TON_COST = price;
+            if (ton < SUB_TON_COST) {
+                showToast(getText('not_enough_ton'), 'error');
+                return;
+            }
+            
+            // У реальній грі: Telegram.WebApp.openInvoice('invoice_url');
+            ton -= SUB_TON_COST;
+            isPremium = true;
+            showToast(getText('subscription_purchased'), 'success');
+            
+            updateDisplay();
+            saveGame();
+        }
+
+        // --- TON Exchange Logic ---
+        function buyPreSaleTokens() {
+            const tonAmount = parseFloat(presaleTonInput.value);
+            const EXCHANGE_RATE = 100000; // 1 TON = 100,000 UCBG
+
+            if (isNaN(tonAmount) || tonAmount <= 0) {
+                showToast(getText('invalid_ton'), 'error');
+                return;
+            }
+            if (ton < tonAmount) {
+                showToast(getText('not_enough_ton'), 'error');
+                return;
+            }
+            if (totalMinedUCBG >= EMISSION_LIMIT) {
+                showToast('Емісія UCBG припинена. Обмін неможливий.', 'error');
+                return;
+            }
+
+            ton -= tonAmount;
+            const ucbgGained = tonAmount * EXCHANGE_RATE;
+            ucbg += ucbgGained;
+            totalMinedUCBG += ucbgGained;
+
+            showToast(`Успішно! Ви обміняли ${formatNumber(tonAmount)} TON на ${formatNumber(ucbgGained)} UCBG!`);
+            presaleTonInput.value = '';
+            updateDisplay();
+            saveGame();
+        }
+
+        // --- Language Selector ---
+        function setupLanguageSelector() {
+            document.querySelectorAll('.language-selector button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const lang = button.id.replace('lang', '').toLowerCase();
+                    currentLanguage = lang;
+                    localStorage.setItem('currentLanguage', currentLanguage);
+                    // Reload or re-render elements with new language
+                    // For simplicity in this demo, you would need to implement a full re-render of all text content
+                    showToast(`Мова змінена на ${lang.toUpperCase()}`, 'info');
+                    document.querySelectorAll('.language-selector button').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                });
+            });
+            document.getElementById(`lang${currentLanguage.toUpperCase()}`).classList.add('active');
+        }
+
+        // --- Initial Load ---
+        function initGame() {
+            loadGame();
+
+            if (!introShown) {
+                introModal.style.display = 'flex';
+                gameContainer.style.display = 'none';
+                return;
+            }
+            gameContainer.style.display = 'block';
+
+            // ... (Mission and other initialization logic) ...
+
+            calculateStats();
+            // applyActiveSkin(); // Must be implemented
+            updateDisplay();
+            setupNavigation();
+            startAutoClicker();
+            // startCardsRefreshTimer(); // Must be implemented
+            // startBoostsTimer(); // Must be implemented
+            setupLanguageSelector();
+            
+            // Periodic check for missions
+            setInterval(() => {
+                updateMissionProgress('ucbg_5000', ucbg);
+            }, 5000);
+        }
+
+        function startGameAfterIntro() {
+            introShown = true;
+            localStorage.setItem('introShown', 'true');
+            closeModal('introModal');
+            initGame();
+        }
+
+        document.addEventListener('DOMContentLoaded', initGame);
+
+    </script>
+</body>
+</html>
